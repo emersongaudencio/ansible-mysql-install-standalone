@@ -36,7 +36,10 @@ if [ "$MYSQL_VERSION" == "80" ];
  then
    COLLATION="utf8mb4_general_ci"
    CHARACTERSET="utf8mb4"
-   MYSQL_BLOCK="### configs innodb cluster ######
+   MYSQL_BLOCK="# native password auth
+   default-authentication-plugin=mysql_native_password
+
+   ### configs innodb cluster ######
    binlog_checksum=none
    enforce_gtid_consistency=on
    gtid_mode=on
@@ -139,10 +142,10 @@ sort_buffer_size                        = $SORT_MEM
 join_buffer_size                        = $SORT_MEM
 innodb_sort_buffer_size                 = 67108864
 myisam_sort_buffer_size                 = $SORT_MEM
-read_rnd_buffer_size                    = 4M
-max_sort_length                         = 4M
-max_length_for_sort_data                = 4M
-read_buffer_size                        = 4M
+read_rnd_buffer_size                    = 2M
+max_sort_length                         = 1M
+max_length_for_sort_data                = 1M
+read_buffer_size                        = 2M
 
 # log configs
 slow_query_log                          = 1
@@ -158,9 +161,10 @@ general_log                             = 0
 # Performance monitoring (with low overhead)
 innodb_monitor_enable                   = all
 performance_schema                      = ON
-
-# native password auth
-default-authentication-plugin=mysql_native_password
+performance-schema-instrument           ='%=ON'
+performance-schema-consumer-events-stages-current=ON
+performance-schema-consumer-events-stages-history=ON
+performance-schema-consumer-events-stages-history-long=ON
 
 $MYSQL_BLOCK
 " > /etc/my.cnf
@@ -206,6 +210,10 @@ sleep 5
 service mysqld start
 sleep 5
 
+### standalone instance standard users ##
+REPLICATION_USER_NAME="replication_user"
+MYSQLCHK_USER_NAME="mysqlchk"
+
 ### generate mysqlchk passwd #####
 RD_MYSQLCHK_USER_PWD="mysqlchk-$SERVERID"
 touch /tmp/$RD_MYSQLCHK_USER_PWD
@@ -218,6 +226,10 @@ touch /tmp/$RD_REPLICATION_USER_PWD
 echo $RD_REPLICATION_USER_PWD > /tmp/$RD_REPLICATION_USER_PWD
 HASH_REPLICATION_USER_PWD=`md5sum  /tmp/$RD_REPLICATION_USER_PWD | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
 
+### users pwd ##
+MYSQLCHK_USER_PWD=$HASH_MYSQLCHK_USER_PWD
+REPLICATION_USER_PWD=$HASH_REPLICATION_USER_PWD
+
 ### generate root passwd #####
 if [ "$MYSQL_VERSION" == "80" ]; then
    passwd="$SERVERID-my80"
@@ -229,14 +241,6 @@ fi
 touch /tmp/$passwd
 echo $passwd > /tmp/$passwd
 hash=`md5sum  /tmp/$passwd | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
-
-### standalone instance standard users ##
-REPLICATION_USER_NAME="replication_user"
-MYSQLCHK_USER_NAME="mysqlchk"
-
-### users pwd ##
-MYSQLCHK_USER_PWD=$HASH_MYSQLCHK_USER_PWD
-REPLICATION_USER_PWD=$HASH_REPLICATION_USER_PWD
 
 ### update root password #####
 mysqladmin -u root password $hash
