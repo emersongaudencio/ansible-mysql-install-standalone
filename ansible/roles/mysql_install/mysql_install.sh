@@ -11,10 +11,6 @@ systemctl stop firewalld
 sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 # disable selinux on the fly
 /usr/sbin/setenforce 0
-####### PACKAGES ###########################
-# -------------- For RHEL/CentOS 7 --------------
-#rpm -ihv http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
-yum -y install epel-release
 
 ### clean yum cache ###
 rm -rf /etc/yum.repos.d/MariaDB.repo
@@ -22,6 +18,11 @@ rm -rf /etc/yum.repos.d/mariadb.repo
 yum clean headers
 yum clean packages
 yum clean metadatas
+
+####### PACKAGES ###########################
+# -------------- For RHEL/CentOS 7 --------------
+yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum -y install epel-release
 
 ### remove old packages ####
 yum -y remove mariadb-libs
