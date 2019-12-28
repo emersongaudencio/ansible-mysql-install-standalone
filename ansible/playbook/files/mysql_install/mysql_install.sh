@@ -2,6 +2,7 @@
 echo "HOSTNAME: " `hostname`
 echo "BEGIN - [`date +%d/%m/%Y" "%H:%M:%S`]"
 echo "##############"
+echo "$1" > /tmp/MYSQL_VERSION
 MYSQL_VERSION=$(cat /tmp/MYSQL_VERSION)
 
 ##### FIREWALLD DISABLE ########################
@@ -33,7 +34,7 @@ yum -y remove MariaDB-common MariaDB-compat
 yum -y remove MariaDB-server MariaDB-client
 
 ### install pre-packages ####
-yum -y install screen expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel zip unzip
+yum -y install yum-utils screen expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel zip unzip
 
 #### REPO MYSQL ######
 # -------------- For RHEL/CentOS 7 --------------

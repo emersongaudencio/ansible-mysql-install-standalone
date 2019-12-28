@@ -41,27 +41,26 @@ if [ "$MYSQL_VERSION" == "80" ];
    COLLATION="utf8mb4_general_ci"
    CHARACTERSET="utf8mb4"
    MYSQL_BLOCK="# native password auth
-   default-authentication-plugin=mysql_native_password
+default-authentication-plugin=mysql_native_password
 
-   ### configs innodb cluster ######
-   binlog_checksum=none
-   enforce_gtid_consistency=on
-   gtid_mode=on
-   master_info_repository=TABLE
-   relay_log_info_repository=TABLE
-   transaction_write_set_extraction=XXHASH64
-   #disabled_storage_engines = MyISAM,BLACKHOLE,FEDERATED,CSV,ARCHIVE
-   slave_parallel_type=LOGICAL_CLOCK
-   slave_preserve_commit_order=1
-   slave_parallel_workers=4"
+### configs innodb cluster ######
+binlog_checksum=none
+enforce_gtid_consistency=on
+gtid_mode=on
+master_info_repository=TABLE
+relay_log_info_repository=TABLE
+transaction_write_set_extraction=XXHASH64
+#disabled_storage_engines = MyISAM,BLACKHOLE,FEDERATED,CSV,ARCHIVE
+slave_parallel_type=LOGICAL_CLOCK
+slave_preserve_commit_order=1
+slave_parallel_workers=4"
 else
   COLLATION="utf8_general_ci"
   CHARACTERSET="utf8"
   MYSQL_BLOCK="### extra confs ####
-  binlog_checksum=none
-  enforce_gtid_consistency=on
-  gtid_mode=on
-  "
+binlog_checksum=none
+enforce_gtid_consistency=on
+gtid_mode=on"
 fi
 
 echo "[client]
@@ -211,7 +210,9 @@ mysqld --defaults-file=/etc/my.cnf --initialize-insecure --user=mysql
 sleep 5
 
 ### start mysql service ###
-service mysqld start
+systemctl enable mysqld.service
+sleep 5
+systemctl start mysqld.service
 sleep 5
 
 ### standalone instance standard users ##
@@ -283,7 +284,12 @@ password        = $hash
 #################################################################
 " > /root/.my.cnf
 
-### setup the users for monitoring user/replication streaming ###
+### setup the users for monitoring/replication streaming and security purpose ###
 mysql -e "CREATE USER '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD'; GRANT REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%';";
 mysql -e "CREATE USER '$MYSQLCHK_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQLCHK_USER_PWD'; GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'localhost';";
+mysql -e "DELETE FROM mysql.user WHERE User='';";
+mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 mysql -e "flush privileges;"
+
+### REMOVE TMP FILES on /tmp #####
+rm -rf /tmp/*
