@@ -70,7 +70,7 @@
  sh run_mysql_install.sh dbtest01 57
  ```
 
- PS: Just remember that you can do a single installation at the time our a group installation you inform the name of the group in the hosts' files instead of the host itself.
+ PS: Just remember that you can do a single installation at the time or a group installation you inform the name of the group in the hosts' files instead of the host itself.
 
  The versions supported for this script are these between the round brackets (55, 56, 57, 80).
 
