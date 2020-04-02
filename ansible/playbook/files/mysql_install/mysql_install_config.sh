@@ -20,6 +20,11 @@ then
  TEMP_TABLE_SIZE='2048M'
  NR_CONNECTIONS=1000
  SORT_MEM='256M'
+ SORT_BLOCK="read_rnd_buffer_size                    = 2M
+max_sort_length                         = 1M
+max_length_for_sort_data                = 1M
+read_buffer_size                        = 2M
+group_concat_max_len                    = 4096"
 else
  INNODB_INSTANCES=8
  INNODB_WRITES=8
@@ -29,6 +34,11 @@ else
  TEMP_TABLE_SIZE='1024M'
  NR_CONNECTIONS=500
  SORT_MEM='128M'
+ SORT_BLOCK="read_rnd_buffer_size                    = 131072
+max_sort_length                         = 262144
+max_length_for_sort_data                = 262144
+read_buffer_size                        = 131072
+group_concat_max_len                    = 2048"
 fi
 
 ### datadir and logdir ####
@@ -141,14 +151,12 @@ connect_timeout                         = 60
 skip-name-resolve                       = 1
 
 # sort and group configs
+key_buffer_size                         = 32M
 sort_buffer_size                        = $SORT_MEM
 join_buffer_size                        = $SORT_MEM
 innodb_sort_buffer_size                 = 67108864
 myisam_sort_buffer_size                 = $SORT_MEM
-read_rnd_buffer_size                    = 2M
-max_sort_length                         = 1M
-max_length_for_sort_data                = 1M
-read_buffer_size                        = 2M
+$SORT_BLOCK
 
 # log configs
 slow_query_log                          = 1
@@ -161,9 +169,12 @@ log-error                               = $DATA_LOG/mysql-error.log
 general_log_file                        = $DATA_LOG/mysql-general.log
 general_log                             = 0
 
+# enable scheduler on mysql
+event_scheduler                         = ON
+
 # Performance monitoring (with low overhead)
 innodb_monitor_enable                   = all
-performance_schema                      = ON
+performance_schema                      = OFF
 performance-schema-instrument           ='%=ON'
 performance-schema-consumer-events-stages-current=ON
 performance-schema-consumer-events-stages-history=ON
