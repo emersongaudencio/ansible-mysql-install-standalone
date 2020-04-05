@@ -9,4 +9,8 @@
 ## 10.25.1.57
 
 [dbservers]
-dbtest01 ansible_ssh_host=172.16.122.135
+dblocalhost ansible_connection=local
+dbmysql55 ansible_ssh_host=172.16.122.135
+dbmysql56 ansible_ssh_host=172.16.122.136
+dbmysql57 ansible_ssh_host=172.16.122.137
+dbmysql80 ansible_ssh_host=172.16.122.138
