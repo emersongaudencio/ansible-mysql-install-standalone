@@ -23,7 +23,7 @@ yum clean metadatas
 ####### PACKAGES ###########################
 # -------------- For RHEL/CentOS 7 --------------
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum -y install epel-release
+# yum -y install epel-release
 
 ### remove old packages ####
 yum -y remove mariadb-libs
@@ -65,13 +65,16 @@ yum clean packages
 yum clean metadata
 
 #### mydumper ######
-yum -y install https://github.com/maxbube/mydumper/releases/download/v0.9.5/mydumper-0.9.5-2.el7.x86_64.rpm
+#yum -y install https://github.com/maxbube/mydumper/releases/download/v0.9.5/mydumper-0.9.5-2.el7.x86_64.rpm
+yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/mydumper-0.9.5-2.el7.x86_64.rpm
+
+#### qpress #####
+yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el7.x86_64.rpm
 
 ### Percona #####
 ### https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
-yum install https://repo.percona.com/yum/release/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm -y
 yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-yum -y install percona-toolkit
+yum -y install percona-toolkit sysbench
 if [ "$MYSQL_VERSION" == "80" ];
  then
    yum -y install percona-xtrabackup-80
