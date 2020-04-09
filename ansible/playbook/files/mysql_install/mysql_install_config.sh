@@ -76,6 +76,7 @@ fi
 echo "[client]
 port                                    = 3306
 socket                                  = /var/lib/mysql/mysql.sock
+prompt                                  = '(\u@\h) MySQL[\d]>\_'
 
 [mysqld]
 server-id                               = $SERVERID
