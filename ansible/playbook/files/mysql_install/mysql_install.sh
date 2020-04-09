@@ -16,6 +16,9 @@ sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 ### clean yum cache ###
 rm -rf /etc/yum.repos.d/MariaDB.repo
 rm -rf /etc/yum.repos.d/mariadb.repo
+rm -rf /etc/yum.repos.d/mysql-community.repo
+rm -rf /etc/yum.repos.d/mysql-community-source.repo
+rm -rf /etc/yum.repos.d/percona-original-release.repo
 yum clean headers
 yum clean packages
 yum clean metadatas
