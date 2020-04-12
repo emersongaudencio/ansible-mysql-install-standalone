@@ -76,7 +76,6 @@ fi
 echo "[client]
 port                                    = 3306
 socket                                  = /var/lib/mysql/mysql.sock
-prompt                                  = '(\u@\h) MySQL[\d]>\_'
 
 [mysqld]
 server-id                               = $SERVERID
@@ -272,6 +271,7 @@ echo The $MYSQLCHK_USER_NAME password is $MYSQLCHK_USER_PWD
 echo "[client]
 user            = root
 password        = $hash
+prompt          = '(\u@\h) MySQL [\d]>\_'
 
 [mysql]
 user            = root
