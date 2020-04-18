@@ -73,10 +73,17 @@
  ```
  sh run_mysql_install.sh dbmysql57 57
  ```
+ ### Parameters specification:
+ #### run_mysql_install.sh
+ Parameter  | Value           | Mandatory | Order | Accepted values
+ ------------ | ------------- | ------------- | -------------
+ host | dbmysql57 | Yes | 1 | hosts who are placed inside of the hosts file
+ db mysql version | 57 | Yes | 2 | 56, 57, 80
+
 
  PS: Just remember that you can do a single installation at the time or a group installation you inform the name of the group in the hosts' files instead of the host itself.
 
- The versions supported for this script are these between the round brackets (55, 56, 57, 80).
+ The versions supported for this script are these between the round brackets (56, 57, 80).
 
 # Translation in Portuguese pt-br
 
