@@ -1,5 +1,6 @@
 ---
 - name: MySQL Standalone Installation
+  gather_facts: false
   hosts: all
   tasks:
      - name: Transfering MySQL install script
