@@ -17,13 +17,14 @@ then
  INNODB_READS=16
  INNODB_MIN_IO=200
  INNODB_MAX_IO=800
- TEMP_TABLE_SIZE='2048M'
+ TEMP_TABLE_SIZE='16M'
  NR_CONNECTIONS=1000
+ NR_CONNECTIONS_USER=950
  SORT_MEM='256M'
- SORT_BLOCK="read_rnd_buffer_size                    = 2M
+ SORT_BLOCK="read_rnd_buffer_size                    = 1M
+read_buffer_size                        = 1M
 max_sort_length                         = 1M
 max_length_for_sort_data                = 1M
-read_buffer_size                        = 2M
 group_concat_max_len                    = 4096"
 else
  INNODB_INSTANCES=8
@@ -31,19 +32,21 @@ else
  INNODB_READS=8
  INNODB_MIN_IO=200
  INNODB_MAX_IO=300
- TEMP_TABLE_SIZE='1024M'
+ TEMP_TABLE_SIZE='16M'
  NR_CONNECTIONS=500
+ NR_CONNECTIONS_USER=450
  SORT_MEM='128M'
  SORT_BLOCK="read_rnd_buffer_size                    = 131072
+read_buffer_size                        = 131072
 max_sort_length                         = 262144
 max_length_for_sort_data                = 262144
-read_buffer_size                        = 131072
 group_concat_max_len                    = 2048"
 fi
 
 ### datadir and logdir ####
 DATA_DIR="/var/lib/mysql/datadir"
 DATA_LOG="/var/lib/mysql-logs"
+TMP_DIR="/var/lib/mysql-tmp"
 
 ### collation and character set ###
 if [ "$MYSQL_VERSION" == "80" ];
@@ -139,12 +142,13 @@ table_open_cache                        = 16384
 table_definition_cache                  = 52428
 max_heap_table_size                     = $TEMP_TABLE_SIZE
 tmp_table_size                          = $TEMP_TABLE_SIZE
-tmpdir                                  = /tmp
+tmpdir                                  = $TMP_DIR
 
 # connection configs
 max_allowed_packet                      = 1G
 net_buffer_length                       = 999424
 max_connections                         = $NR_CONNECTIONS
+max_user_connections                    = $NR_CONNECTIONS_USER
 max_connect_errors                      = 100
 wait_timeout                            = 28800
 connect_timeout                         = 60
