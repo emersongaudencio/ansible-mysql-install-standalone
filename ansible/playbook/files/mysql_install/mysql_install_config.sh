@@ -49,8 +49,7 @@ DATA_LOG="/var/lib/mysql-logs"
 TMP_DIR="/var/lib/mysql-tmp"
 
 ### collation and character set ###
-if [ "$MYSQL_VERSION" == "80" ];
- then
+if [ "$MYSQL_VERSION" == "80" ]; then
    COLLATION="utf8mb4_general_ci"
    CHARACTERSET="utf8mb4"
    MYSQL_BLOCK="# native password auth
@@ -67,13 +66,32 @@ transaction_write_set_extraction=XXHASH64
 slave_parallel_type=LOGICAL_CLOCK
 slave_preserve_commit_order=1
 slave_parallel_workers=4"
+elif [ "$MYSQL_VERSION" == "57" ]; then
+  COLLATION="utf8_general_ci"
+  CHARACTERSET="utf8"
+  MYSQL_BLOCK="#### extra confs ####
+binlog_checksum=none
+enforce_gtid_consistency=on
+gtid_mode=on
+#### tmp table storage engine ####
+internal_tmp_disk_storage_engine = MyISAM
+#### MTS config ####
+slave_parallel_type=LOGICAL_CLOCK
+slave_preserve_commit_order=1
+slave_parallel_workers=4
+"
 else
   COLLATION="utf8_general_ci"
   CHARACTERSET="utf8"
-  MYSQL_BLOCK="### extra confs ####
+  MYSQL_BLOCK="#### extra confs ####
 binlog_checksum=none
 enforce_gtid_consistency=on
-gtid_mode=on"
+gtid_mode=on
+#### tmp table storage engine ####
+internal_tmp_disk_storage_engine = MyISAM
+#### MTS config ####
+slave_parallel_workers=2
+"
 fi
 
 echo "[client]
