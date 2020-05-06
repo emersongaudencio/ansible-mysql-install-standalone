@@ -87,10 +87,6 @@ else
 binlog_checksum=none
 enforce_gtid_consistency=on
 gtid_mode=on
-#### tmp table storage engine ####
-internal_tmp_disk_storage_engine = MyISAM
-#### MTS config ####
-slave_parallel_workers=2
 "
 fi
 
@@ -236,6 +232,15 @@ then
     chown -Rf mysql.mysql ${DATA_LOG}
 else
     chown -Rf mysql.mysql ${DATA_LOG}
+fi
+
+if [ ! -d ${TMP_DIR} ]
+then
+    mkdir -p ${TMP_DIR}
+    chmod 755 ${TMP_DIR}
+    chown -Rf mysql.mysql ${TMP_DIR}
+else
+    chown -Rf mysql.mysql ${TMP_DIR}
 fi
 
 ### mysql_install_db for deploy a new db fresh and clean ###
