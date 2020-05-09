@@ -114,6 +114,10 @@ optimizer_switch                        = 'index_merge_intersection=off'
 bulk_insert_buffer_size                 = 128M
 thread_cache_size                       = 300
 
+# files limits
+open_files_limit                        = 102400
+innodb_open_files                       = 65536
+
 # logbin configs
 log-bin                                 = $DATA_LOG/mysql-bin
 binlog_format                           = ROW
