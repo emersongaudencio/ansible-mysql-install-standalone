@@ -35,7 +35,7 @@ yum -y remove mysql mysql-server mysql-libs mysql-common mysql-community-common 
 yum -y remove 'mysql*'
 yum -y remove MariaDB-common MariaDB-compat
 yum -y remove MariaDB-server MariaDB-client
-yum -y remove percona-release 
+yum -y remove percona-release
 
 ### install pre-packages ####
 yum -y install yum-utils screen expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel zip unzip
@@ -86,6 +86,41 @@ else
    yum -y install percona-xtrabackup-24
 fi
 
+#####  MYSQL LIMITS ###########################
+check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
+if [ "$check_limits" == "0" ]; then
+echo ' ' >> /etc/security/limits.conf
+echo '# mysql-pre-reqs' >> /etc/security/limits.conf
+echo 'mysql              soft    nproc   102400' >> /etc/security/limits.conf
+echo 'mysql              hard    nproc   102400' >> /etc/security/limits.conf
+echo 'mysql              soft    nofile  102400' >> /etc/security/limits.conf
+echo 'mysql              hard    nofile  102400' >> /etc/security/limits.conf
+echo 'mysql              soft    stack   102400' >> /etc/security/limits.conf
+echo 'mysql              soft    core unlimited' >> /etc/security/limits.conf
+echo 'mysql              hard    core unlimited' >> /etc/security/limits.conf
+echo '# all_users' >> /etc/security/limits.conf
+echo '* soft nofile 102400' >> /etc/security/limits.conf
+echo '* hard nofile 102400' >> /etc/security/limits.conf
+else
+echo "MySQL Pre-reqs for /etc/security/limits.conf is already in place!"
+fi
+
+##### CONFIG PROFILE #############
+check_profile=$(cat /etc/profile | grep '# mysql-pre-reqs' | wc -l)
+if [ "$check_profile" == "0" ]; then
+echo ' ' >> /etc/profile
+echo '# mysql-pre-reqs' >> /etc/profile
+echo 'if [ $USER = "mysql" ]; then' >> /etc/profile
+echo '  if [ $SHELL = "/bin/bash" ]; then' >> /etc/profile
+echo '    ulimit -u 65536 -n 65536' >> /etc/profile
+echo '  else' >> /etc/profile
+echo '    ulimit -u 65536 -n 65536' >> /etc/profile
+echo '  fi' >> /etc/profile
+echo 'fi' >> /etc/profile
+else
+echo "MySQL Pre-reqs for /etc/profile is already in place!"
+fi
+
 ##### SYSCTL MYSQL ###########################
 check_sysctl=$(cat /etc/sysctl.conf | grep '# mysql-pre-reqs' | wc -l)
 if [ "$check_sysctl" == "0" ]; then
@@ -112,47 +147,12 @@ fi
 sysctl -p
 
 #####  MYSQL LIMITS ###########################
-check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
-if [ "$check_limits" == "0" ]; then
-echo ' ' >> /etc/security/limits.conf
-echo '# mysql-pre-reqs' >> /etc/security/limits.conf
-echo 'mysql              soft    nproc   102400' >> /etc/security/limits.conf
-echo 'mysql              hard    nproc   102400' >> /etc/security/limits.conf
-echo 'mysql              soft    nofile  102400' >> /etc/security/limits.conf
-echo 'mysql              hard    nofile  102400' >> /etc/security/limits.conf
-echo 'mysql              soft    stack   102400' >> /etc/security/limits.conf
-echo 'mysql              soft    core unlimited' >> /etc/security/limits.conf
-echo 'mysql              hard    core unlimited' >> /etc/security/limits.conf
-echo '# all_users' >> /etc/security/limits.conf
-echo '* soft nofile 102400' >> /etc/security/limits.conf
-echo '* hard nofile 102400' >> /etc/security/limits.conf
-else
-echo "MySQL Pre-reqs for /etc/security/limits.conf is already in place!"
-fi
-
-#####  MYSQL LIMITS ###########################
 mkdir -p /etc/systemd/system/mysqld.service.d/
 echo '[Service]' > /etc/systemd/system/mysqld.service.d/limits.conf
 echo 'LimitNOFILE=102400' >> /etc/systemd/system/mysqld.service.d/limits.conf
 echo '[Service]' > /etc/systemd/system/mysqld.service.d/timeout.conf
 echo 'TimeoutSec=28800' >> /etc/systemd/system/mysqld.service.d/timeout.conf
 systemctl daemon-reload
-
-##### CONFIG PROFILE #############
-check_profile=$(cat /etc/profile | grep '# mysql-pre-reqs' | wc -l)
-if [ "$check_profile" == "0" ]; then
-echo ' ' >> /etc/profile
-echo '# mysql-pre-reqs' >> /etc/profile
-echo 'if [ $USER = "mysql" ]; then' >> /etc/profile
-echo '  if [ $SHELL = "/bin/bash" ]; then' >> /etc/profile
-echo '    ulimit -u 65536 -n 65536' >> /etc/profile
-echo '  else' >> /etc/profile
-echo '    ulimit -u 65536 -n 65536' >> /etc/profile
-echo '  fi' >> /etc/profile
-echo 'fi' >> /etc/profile
-else
-echo "MySQL Pre-reqs for /etc/profile is already in place!"
-fi
 
 echo "##############"
 echo "END - [`date +%d/%m/%Y" "%H:%M:%S`]"
