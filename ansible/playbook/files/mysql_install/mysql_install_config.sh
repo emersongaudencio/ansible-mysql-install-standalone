@@ -194,7 +194,7 @@ $SORT_BLOCK
 # log configs
 slow_query_log                          = 1
 slow_query_log_file                     = $DATA_LOG/mysql-slow.log
-long_query_time                         = 0
+long_query_time                         = 3
 log_slow_admin_statements               = 1
 
 log-error                               = $DATA_LOG/mysql-error.log
@@ -207,7 +207,7 @@ event_scheduler                         = 1
 
 # Performance monitoring (with low overhead)
 innodb_monitor_enable                   = all
-performance_schema                      = OFF
+performance_schema                      = ON
 performance-schema-instrument           ='%=ON'
 performance-schema-consumer-events-stages-current=ON
 performance-schema-consumer-events-stages-history=ON
