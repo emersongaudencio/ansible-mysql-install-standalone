@@ -63,7 +63,11 @@ TMP_DIR="/var/lib/mysql-tmp"
 if [ "$MYSQL_VERSION" == "80" ]; then
    COLLATION="utf8mb4_general_ci"
    CHARACTERSET="utf8mb4"
-   MYSQL_BLOCK="# native password auth
+   MYSQL_BLOCK="#### admin extra port ####
+admin_address = 127.0.0.1
+admin_port = 33306
+
+# native password auth
 default-authentication-plugin=mysql_native_password
 
 ### configs innodb cluster ######
