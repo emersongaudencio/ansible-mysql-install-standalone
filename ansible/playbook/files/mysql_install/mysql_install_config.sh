@@ -75,6 +75,7 @@ binlog_checksum=none
 binlog_order_commits=1
 enforce_gtid_consistency=on
 gtid_mode=on
+session_track_gtids=OWN_GTID
 master_info_repository=TABLE
 relay_log_info_repository=TABLE
 relay_log_recovery=1
@@ -82,7 +83,7 @@ transaction_write_set_extraction=XXHASH64
 #### MTS config ####
 slave_parallel_type=LOGICAL_CLOCK
 slave_preserve_commit_order=1
-slave_parallel_workers=4"
+slave_parallel_workers=8"
 elif [ "$MYSQL_VERSION" == "57" ]; then
   COLLATION="utf8_general_ci"
   CHARACTERSET="utf8"
@@ -91,6 +92,7 @@ binlog_checksum=none
 binlog_order_commits=1
 enforce_gtid_consistency=on
 gtid_mode=on
+session_track_gtids=OWN_GTID
 master_info_repository=TABLE
 relay_log_info_repository=TABLE
 relay_log_recovery=1
@@ -100,7 +102,7 @@ internal_tmp_disk_storage_engine = MyISAM
 #### MTS config ####
 slave_parallel_type=LOGICAL_CLOCK
 slave_preserve_commit_order=1
-slave_parallel_workers=4
+slave_parallel_workers=8
 "
 else
   COLLATION="utf8_general_ci"
