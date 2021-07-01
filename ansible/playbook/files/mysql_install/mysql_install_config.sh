@@ -47,8 +47,8 @@ else
  NR_CONNECTIONS=600
  NR_CONNECTIONS_USER=512
  SORT_MEM='128M'
- SORT_BLOCK="read_rnd_buffer_size                    = 131072
-read_buffer_size                        = 131072
+ SORT_BLOCK="read_rnd_buffer_size                    = 524288
+read_buffer_size                        = 262144
 max_sort_length                         = 262144
 max_length_for_sort_data                = 262144
 group_concat_max_len                    = 2048"
@@ -180,7 +180,7 @@ innodb_doublewrite                      = 1
 innodb_thread_concurrency               = 0
 
 # innodb redologs
-innodb_log_file_size                    = 1G
+innodb_log_file_size                    = 1G # 1073741824
 innodb_log_files_in_group               = 4
 
 # table configs
@@ -191,7 +191,7 @@ tmp_table_size                          = $TEMP_TABLE_SIZE
 tmpdir                                  = $TMP_DIR
 
 # connection configs
-max_allowed_packet                      = 1G
+max_allowed_packet                      = 1G # 1073741824
 net_buffer_length                       = 999424
 max_connections                         = $NR_CONNECTIONS
 max_user_connections                    = $NR_CONNECTIONS_USER
@@ -201,7 +201,7 @@ connect_timeout                         = 60
 skip-name-resolve                       = 1
 
 # sort and group configs
-key_buffer_size                         = 32M
+key_buffer_size                         = 32M # 33554432
 sort_buffer_size                        = $SORT_MEM
 join_buffer_size                        = $SORT_MEM
 innodb_sort_buffer_size                 = 67108864
