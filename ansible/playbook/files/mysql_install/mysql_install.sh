@@ -127,28 +127,10 @@ if [[ $os_type == "rhel" ]]; then
       #### https://dev.mysql.com/downloads/repo/yum/
       if [ "$MYSQL_VERSION" == "80" ]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm
-         #### REPO MySQL ######
-         # -------------- For RHEL/CentOS 8 --------------
-         echo "# Enable to use MySQL 8.0
-[mysql80-community]
-name=MySQL 8.0 Community Server
-baseurl=http://repo.mysql.com/yum/mysql-8.0-community/el/8/\$basearch/
-enabled=1
-gpgcheck=1
-module_hotfixes=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql" > /etc/yum.repos.d/mysql-community.repo
+         sed -ie 's/enabled=1/enabled=1\nmodule_hotfixes=1/g' /etc/yum.repos.d/mysql-community.repo
        elif [[ "$MYSQL_VERSION" == "57" ]]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
-         #### REPO MySQL ######
-         # -------------- For RHEL/CentOS 8 --------------
-         echo "# Enable to use MySQL 5.7
-[mysql57-community]
-name=MySQL 5.7 Community Server
-baseurl=http://repo.mysql.com/yum/mysql-5.7-community/el/7/\$basearch/
-enabled=1
-gpgcheck=1
-module_hotfixes=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql" > /etc/yum.repos.d/mysql-community.repo
+         sed -ie 's/enabled=1/enabled=1\nmodule_hotfixes=1/g' /etc/yum.repos.d/mysql-community.repo
        elif [[ "$MYSQL_VERSION" == "56" ]]; then
          error "Could not install MySQL 5.7 because is not supported on RHEL 8."
       fi
@@ -162,8 +144,6 @@ yum -y install mysql-community-devel
 yum -y install mysql-shell
 yum -y install mysql-community-libs-compat
 yum -y install perl-DBD-MySQL
-yum -y install MySQL-python
-
 
 ####### PACKAGES ###########################
 if [[ $os_type == "rhel" ]]; then
