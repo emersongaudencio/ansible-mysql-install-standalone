@@ -175,20 +175,7 @@ if [[ $os_type == "rhel" ]]; then
          percona-release setup -y ps80
 
        elif [[ "$MYSQL_VERSION" == "57" ]]; then
-         yum -y install https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
-         sed -ie 's/enabled=1/enabled=1\nmodule_hotfixes=1/g' /etc/yum.repos.d/mysql-community.repo
-
-         ### installation mysql57 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps57
-
+         error "Could not install MySQL 5.7 because is not supported on RHEL 8."
        elif [[ "$MYSQL_VERSION" == "56" ]]; then
          error "Could not install MySQL 5.6 because is not supported on RHEL 8."
       fi
