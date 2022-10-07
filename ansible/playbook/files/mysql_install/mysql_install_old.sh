@@ -71,12 +71,14 @@ yum clean all
 
 ####### PACKAGES ###########################
 if [[ $os_type == "rhel" ]]; then
-    # yum -y install epel-release
     if [[ $os_version == "7" ]]; then
+      # -------------- For RHEL/CentOS 7 --------------
       yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     elif [[ $os_version == "8" ]]; then
+      # -------------- For RHEL/CentOS 8 --------------
       yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     fi
+# yum -y install epel-release
 fi
 
 ### remove old packages ####
@@ -84,11 +86,10 @@ yum -y remove mariadb-libs
 yum -y remove 'maria*'
 yum -y remove mysql mysql-server mysql-libs mysql-common mysql-community-common mysql-community-libs
 yum -y remove 'mysql*'
-yum -y remove 'percona*'
-yum -y remove 'Percona-*'
 yum -y remove MariaDB-common MariaDB-compat
 yum -y remove MariaDB-server MariaDB-client
 yum -y remove percona-release
+yum -y remove galera
 
 ### clean yum cache ###
 yum clean all
@@ -112,49 +113,14 @@ if [[ $os_type == "rhel" ]]; then
       #### https://dev.mysql.com/downloads/repo/yum/
       if [ "$MYSQL_VERSION" == "80" ]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-7.noarch.rpm
-
-         ### installation mysql8 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps80
-
        elif [[ "$MYSQL_VERSION" == "57" ]]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-7.noarch.rpm
          yum-config-manager --disable mysql80-community
          yum-config-manager --enable mysql57-community
-
-         ### installation mysql57 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps57
-
        elif [[ "$MYSQL_VERSION" == "56" ]]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-7.noarch.rpm
          yum-config-manager --disable mysql80-community
          yum-config-manager --enable mysql56-community
-
-         ### installation mysql56 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps56
       fi
     elif [[ $os_version == "8" ]]; then
       # -------------- For RHEL/CentOS 8 --------------
@@ -162,42 +128,22 @@ if [[ $os_type == "rhel" ]]; then
       if [ "$MYSQL_VERSION" == "80" ]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
          sed -ie 's/enabled=1/enabled=1\nmodule_hotfixes=1/g' /etc/yum.repos.d/mysql-community.repo
-
-         ### installation mysql8 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps80
-
        elif [[ "$MYSQL_VERSION" == "57" ]]; then
          yum -y install https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
          sed -ie 's/enabled=1/enabled=1\nmodule_hotfixes=1/g' /etc/yum.repos.d/mysql-community.repo
-
-         ### installation mysql57 via yum ####
-         yum -y install mysql-community-client
-         yum -y install mysql-community-server
-         yum -y install mysql-community-devel
-         yum -y install mysql-shell
-         yum -y install mysql-community-libs-compat
-         yum -y install perl-DBD-MySQL
-
-         yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
-         percona-release setup -y ps57
-
        elif [[ "$MYSQL_VERSION" == "56" ]]; then
-         error "Could not install MySQL 5.6 because is not supported on RHEL 8."
+         error "Could not install MySQL 5.7 because is not supported on RHEL 8."
       fi
     fi
 fi
 
-### installation mysql add-ons via yum ####
+### installation mysql8 via yum ####
+yum -y install mysql-community-client
+yum -y install mysql-community-server
+yum -y install mysql-community-devel
+yum -y install mysql-shell
+yum -y install mysql-community-libs-compat
 yum -y install perl-DBD-MySQL
-yum -y install jemalloc
 
 ####### PACKAGES ###########################
 if [[ $os_type == "rhel" ]]; then
@@ -220,16 +166,15 @@ if [[ $os_type == "rhel" ]]; then
 fi
 
 ### Percona #####
+### https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
+yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
+yum -y install percona-toolkit sysbench
 if [ "$MYSQL_VERSION" == "80" ];
  then
    yum -y install percona-xtrabackup-80
 else
    yum -y install percona-xtrabackup-24
 fi
-
-### https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
-percona-release enable tools release
-yum -y install percona-toolkit sysbench
 
 #####  MYSQL LIMITS ###########################
 check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
@@ -308,40 +253,6 @@ echo 'LimitNOFILE=102400' >> /etc/systemd/system/mysqld.service.d/limits.conf
 echo '[Service]' > /etc/systemd/system/mysqld.service.d/timeout.conf
 echo 'TimeoutSec=28800' >> /etc/systemd/system/mysqld.service.d/timeout.conf
 systemctl daemon-reload
-
-#####  MYSQL MEMORY ALLOCATOR ###########################
-#echo '[Service]' > /etc/systemd/system/mysqld.service.d/malloc.conf
-#echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
-#echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
-#systemctl daemon-reload
-
-# disable transparent huge pages
-echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
-echo "echo never > /sys/kernel/mm/transparent_hugepage/defrag" >> /etc/rc.d/rc.local
-chmod +x /etc/rc.d/rc.local
-
-if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
-  echo never > /sys/kernel/mm/transparent_hugepage/enabled
-fi
-if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
-  echo never > /sys/kernel/mm/transparent_hugepage/defrag
-fi
-
-# set oom score for mysql in linux systems
-echo '#!/bin/bash
-#### set oom score for mysql in linux systems ####
-MYSQL_PID=$(pgrep mysqld | awk "NR==1{print $1}")
-if test -f /proc/${MYSQL_PID}/oom_score_adj; then
-  CURRENT_SCORE=$(cat /proc/${MYSQL_PID}/oom_score_adj)
-  if [ "$CURRENT_SCORE" == "0" ]; then
-    echo -800 > /proc/${MYSQL_PID}/oom_score_adj
-    echo "MySQL OOM Score was set to -800"
-  else
-    echo "MySQL OOM Score is already in place!"
-  fi
-fi' > /root/mysql_oom_score.sh
-# set cron job to update the mysql oom score
-(crontab -l; echo "*/5 * * * * root bash /root/mysql_oom_score.sh >/dev/null 2>&1")|awk '!x[$0]++'|crontab -
 
 echo "##############"
 echo "END - [`date +%d/%m/%Y" "%H:%M:%S`]"
