@@ -297,10 +297,7 @@ echo 'TimeoutSec=28800' >> /etc/systemd/system/mysqld.service.d/timeout.conf
 systemctl daemon-reload
 
 #####  MYSQL MEMORY ALLOCATOR ###########################
-#echo '[Service]' > /etc/systemd/system/mysqld.service.d/malloc.conf
-#echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
-#echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
-#systemctl daemon-reload
+echo 'LD_PRELOAD=/usr/lib64/libjemalloc.so.1' > /etc/sysconfig/mysql
 
 # disable transparent huge pages
 echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
